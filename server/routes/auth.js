@@ -1,9 +1,9 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const Customer = require('../server/models/Customer');
-const Mechanic = require('../server/models/Mechanic');
-const Admin = require('../server/models/Admin');
+const Customer = require('../models/Customer');
+const Mechanic = require('../models/Mechanic');
+const Admin = require('../models/Admin');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
