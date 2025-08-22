@@ -19,7 +19,7 @@
           "raw": "http://localhost:5000/api/auth/signup/customer",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "5000",
+          "port": "5001",
           "path": ["api", "auth", "signup", "customer"]
         }
       }
@@ -39,7 +39,7 @@
           "raw": "http://localhost:5000/api/auth/signup/mechanic",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "5000",
+          "port": "5001",
           "path": ["api", "auth", "signup", "mechanic"]
         }
       }
@@ -59,7 +59,7 @@
           "raw": "http://localhost:5000/api/auth/signup/admin",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "5000",
+          "port": "5001",
           "path": ["api", "auth", "signup", "admin"]
         }
       }
@@ -76,10 +76,10 @@
           "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"password123\"\n}"
         },
         "url": {
-          "raw": "http://localhost:5000/api/auth/login",
+          "raw": "http://localhost:5001/api/auth/login",
           "protocol": "http",
           "host": ["localhost"],
-          "port": "5000",
+          "port": "5001",
           "path": ["api", "auth", "login"]
         }
       }
