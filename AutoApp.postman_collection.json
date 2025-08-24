@@ -16,7 +16,7 @@
           "raw": "{\n  \"customerName\": \"Test Customer\",\n  \"email\": \"customer@example.com\",\n  \"password\": \"password123\"\n}"
         },
         "url": {
-          "raw": "http://localhost:5000/api/auth/signup/customer",
+          "raw": "http://localhost:5001/api/auth/signup/customer",
           "protocol": "http",
           "host": ["localhost"],
           "port": "5001",
@@ -36,7 +36,7 @@
           "raw": "{\n  \"mechanicName\": \"Test Mechanic\",\n  \"email\": \"mechanic@example.com\",\n  \"password\": \"password123\"\n}"
         },
         "url": {
-          "raw": "http://localhost:5000/api/auth/signup/mechanic",
+          "raw": "http://localhost:5001/api/auth/signup/mechanic",
           "protocol": "http",
           "host": ["localhost"],
           "port": "5001",
@@ -56,7 +56,7 @@
           "raw": "{\n  \"adminUserName\": \"Test Admin\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
         },
         "url": {
-          "raw": "http://localhost:5000/api/auth/signup/admin",
+          "raw": "http://localhost:5001/api/auth/signup/admin",
           "protocol": "http",
           "host": ["localhost"],
           "port": "5001",
