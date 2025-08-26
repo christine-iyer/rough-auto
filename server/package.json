@@ -16,7 +16,6 @@
     "debug": "^4.4.1",
     "ecdsa-sig-formatter": "^1.0.11",
     "fill-range": "^7.1.1",
-    "fsevents": "^2.3.3",
     "glob-parent": "^5.1.2",
     "has-flag": "^3.0.0",
     "ignore-by-default": "^1.0.1",
@@ -59,7 +58,6 @@
     "webidl-conversions": "^7.0.0",
     "whatwg-url": "^14.2.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
