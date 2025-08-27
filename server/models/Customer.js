@@ -6,6 +6,11 @@ const customerSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   userType: { type: String, default: 'customer' },
+  vehicles: [{
+    make: { type: String, required: true },
+    model: { type: String, required: true },
+    year: { type: Number, required: true }
+  }],
   serviceRequests: { type: [mongoose.Schema.Types.ObjectId], ref: 'ServiceRequest', default: [] }
 });
 
