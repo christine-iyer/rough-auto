@@ -10,7 +10,7 @@
         "method": "POST",
         "header": [
           { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer <customer_token>" }
+          { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YjBjMzI4MWI0NDQ2NDJiYTQwOWMzZSIsInVzZXJUeXBlIjoiY3VzdG9tZXIiLCJpYXQiOjE3NTY0MTQ5NDMsImV4cCI6MTc1NjUwMTM0M30.hE4a5Oz8EKnDUZhkQBjuNNQj_PrMnrvzyTPjJdN40sI" }
         ],
         "body": {
           "mode": "raw",
@@ -31,7 +31,7 @@
         "method": "PATCH",
         "header": [
           { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer <mechanic_token>" }
+          { "key": "Authorization", "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YjBjMzI4MWI0NDQ2NDJiYTQwOWMzZSIsInVzZXJUeXBlIjoiY3VzdG9tZXIiLCJpYXQiOjE3NTY0MTQ5NDMsImV4cCI6MTc1NjUwMTM0M30.hE4a5Oz8EKnDUZhkQBjuNNQj_PrMnrvzyTPjJdN40sI" }
         ],
         "body": {
           "mode": "raw",
