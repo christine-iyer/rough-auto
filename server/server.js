@@ -17,6 +17,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/rough-auto'
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/service-request', require('./routes/serviceRequest'));
+app.use('/api/list', require('./routes/list'));
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
