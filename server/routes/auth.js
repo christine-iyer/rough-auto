@@ -6,7 +6,7 @@ const Mechanic = require('../models/Mechanic');
 const Admin = require('../models/Admin');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'your_JWT_SECRET';
+const JWT_SECRET = process.env.JWT_SECRET || 'thisisasecret';
 
 // Customer Signup
 router.post('/signup/customer', async (req, res) => {
@@ -70,6 +70,10 @@ router.post('/login', async (req, res) => {
     if (!user) return res.status(400).json({ error: 'Invalid credentials' });
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
+
+    // Add this line before signing the token
+    console.log('JWT_SECRET in login:', JWT_SECRET);
+
     const token = jwt.sign({ id: user._id, userType }, JWT_SECRET, { expiresIn: '1d' });
     res.json({ token });
   } catch (err) {
