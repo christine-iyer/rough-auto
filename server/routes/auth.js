@@ -6,7 +6,7 @@ const Mechanic = require('../models/Mechanic');
 const Admin = require('../models/Admin');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'your_JWT_SECRET';
 
 // Customer Signup
 router.post('/signup/customer', async (req, res) => {
