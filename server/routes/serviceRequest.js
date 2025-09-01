@@ -62,6 +62,7 @@ router.get('/mechanic/:mechanicId', auth, async (req, res) => {
 router.get('/customer/:customerId', auth, async (req, res) => {
   try {
     const requests = await ServiceRequest.find({ customer: req.params.customerId }).populate('mechanic').populate('vehicle');
+    console.log(requests);
     res.json(requests);
   } catch (err) {
     res.status(500).json({ error: err.message });
