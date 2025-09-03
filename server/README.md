@@ -1,3 +1,5 @@
+# Next Steps
+
 # AutoApp Backend
 
 This is the backend for the AutoApp MERN stack project. It provides RESTful API endpoints for user authentication and management using MongoDB Atlas, Express, JWT, and bcrypt.
