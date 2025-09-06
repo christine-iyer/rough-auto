@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Auto Service App</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Admin Dashboard</h1>
+            <div class="nav">
+                <div class="nav-links">
+                    <a href="#" onclick="showSection('overview')">Overview</a>
+                    <a href="#" onclick="showSection('customers')">Customers</a>
+                    <a href="#" onclick="showSection('mechanics')">Mechanics</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Welcome to Admin Dashboard</h2>
+            <div id="userInfo">
+                <p>Loading user information...</p>
+            </div>
+        </div>
+
+        <!-- Overview Section -->
+        <div id="overviewSection" class="card">
+            <h3>Platform Overview</h3>
+            <div id="stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0;">
+                <div class="card" style="text-align: center; margin: 0;">
+                    <h4 id="customersCount">-</h4>
+                    <p>Total Customers</p>
+                </div>
+                <div class="card" style="text-align: center; margin: 0;">
+                    <h4 id="mechanicsCount">-</h4>
+                    <p>Total Mechanics</p>
+                </div>
+                <div class="card" style="text-align: center; margin: 0;">
+                    <h4 id="requestsCount">-</h4>
+                    <p>Service Requests</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers Section -->
+        <div id="customersSection" class="card hidden">
+            <h3>Customers</h3>
+            <div id="customersList">
+                <div class="loading">Loading customers...</div>
+            </div>
+        </div>
+
+        <!-- Mechanics Section -->
+        <div id="mechanicsSection" class="card hidden">
+            <h3>Mechanics</h3>
+            <div id="mechanicsList">
+                <div class="loading">Loading mechanics...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Ensure user is authenticated and is an admin
+        if (!requireAuth()) {
+            // Exit early if not authenticated
+        } else {
+            const user = Auth.getCurrentUser();
+            if (user.userType !== 'admin') {
+                Utils.showError('Access denied. Admin account required.');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                init();
+            }
+        }
+
+        function init() {
+            const user = Auth.getCurrentUser();
+            // Load user information
+            document.getElementById('userInfo').innerHTML = `
+                <p><strong>Admin ID:</strong> ${user.id}</p>
+                <p><strong>Account Type:</strong> ${Utils.capitalizeFirst(user.userType)}</p>
+            `;
+            
+            // Load overview data
+            loadOverview();
+        }
+
+        // Show/hide sections
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('#overviewSection, #customersSection, #mechanicsSection').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(section + 'Section').classList.remove('hidden');
+            
+            // Load data for the section
+            switch(section) {
+                case 'customers':
+                    loadCustomers();
+                    break;
+                case 'mechanics':
+                    loadMechanics();
+                    break;
+                case 'overview':
+                    loadOverview();
+                    break;
+            }
+        }
+
+        // Load overview stats
+        async function loadOverview() {
+            try {
+                const [customers, mechanics] = await Promise.all([
+                    Lists.getCustomers(),
+                    Lists.getMechanics()
+                ]);
+                
+                document.getElementById('customersCount').textContent = customers.length;
+                document.getElementById('mechanicsCount').textContent = mechanics.length;
+                document.getElementById('requestsCount').textContent = 'N/A'; // Would need additional API endpoint
+            } catch (error) {
+                Utils.showError('Failed to load overview data');
+            }
+        }
+
+        // Load customers
+        async function loadCustomers() {
+            try {
+                const customers = await Lists.getCustomers();
+                const container = document.getElementById('customersList');
+                
+                if (customers.length === 0) {
+                    container.innerHTML = '<p>No customers found.</p>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div class="mechanics-grid">
+                        ${customers.map(customer => `
+                            <div class="mechanic-card">
+                                <h4>${customer.customerName}</h4>
+                                <p><strong>Email:</strong> ${customer.email}</p>
+                                <p><strong>Customer ID:</strong> ${customer._id}</p>
+                                <p><strong>Vehicles:</strong> ${customer.vehicles ? customer.vehicles.length : 0}</p>
+                                <p><strong>Service Requests:</strong> ${customer.serviceRequests ? customer.serviceRequests.length : 0}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                Utils.showError('Failed to load customers');
+                document.getElementById('customersList').innerHTML = '<p>Error loading customers.</p>';
+            }
+        }
+
+        // Load mechanics
+        async function loadMechanics() {
+            try {
+                const mechanics = await Lists.getMechanics();
+                const container = document.getElementById('mechanicsList');
+                
+                if (mechanics.length === 0) {
+                    container.innerHTML = '<p>No mechanics found.</p>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div class="mechanics-grid">
+                        ${mechanics.map(mechanic => `
+                            <div class="mechanic-card">
+                                <h4>${mechanic.mechanicName}</h4>
+                                <p><strong>Email:</strong> ${mechanic.email}</p>
+                                <p><strong>Mechanic ID:</strong> ${mechanic._id}</p>
+                                <p><strong>Service Requests:</strong> ${mechanic.serviceRequests ? mechanic.serviceRequests.length : 0}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                Utils.showError('Failed to load mechanics');
+                document.getElementById('mechanicsList').innerHTML = '<p>Error loading mechanics.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

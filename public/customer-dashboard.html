@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - Auto Service App</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Customer Dashboard</h1>
+            <div class="nav">
+                <div class="nav-links">
+                    <a href="/mechanics-list.html">Find Mechanics</a>
+                    <a href="/create-request.html">Create Service Request</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Welcome to Your Dashboard</h2>
+            <div id="userInfo">
+                <p>Loading user information...</p>
+            </div>
+        </div>
+
+        <div class="service-requests">
+            <div class="card">
+                <h3>Your Service Requests</h3>
+                <div id="serviceRequestsList">
+                    <div class="loading">Loading your service requests...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Ensure user is authenticated and is a customer
+        if (!requireAuth()) {
+            // Exit early if not authenticated
+        } else {
+            const user = Auth.getCurrentUser();
+            if (user.userType !== 'customer') {
+                Utils.showError('Access denied. Customer account required.');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                init();
+            }
+        }
+
+        function init() {
+            // Load user information
+            const user = Auth.getCurrentUser();
+            document.getElementById('userInfo').innerHTML = `
+                <p><strong>Customer ID:</strong> ${user.id}</p>
+                <p><strong>Account Type:</strong> ${Utils.capitalizeFirst(user.userType)}</p>
+            `;
+            
+            // Load data on page load
+            loadServiceRequests();
+        }
+
+        // Load data on page load
+        async function loadServiceRequests() {
+            try {
+                const user = Auth.getCurrentUser();
+                const requests = await ServiceRequests.getByCustomer(user.id);
+                const container = document.getElementById('serviceRequestsList');
+                
+                if (requests.length === 0) {
+                    container.innerHTML = '<p>No service requests found. <a href="/create-request.html">Create your first request</a></p>';
+                    return;
+                }
+                
+                container.innerHTML = requests.map(request => `
+                    <div class="request-card ${request.status}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h4>Service Request</h4>
+                            <span class="status-badge status-${request.status}">${request.status}</span>
+                        </div>
+                        <p><strong>Vehicle:</strong> ${request.vehicle.year} ${request.vehicle.make} ${request.vehicle.model}</p>
+                        <p><strong>Description:</strong> ${request.description}</p>
+                        <p><strong>Mechanic:</strong> ${request.mechanic ? request.mechanic.mechanicName : 'Not assigned'}</p>
+                        <p><strong>Created:</strong> ${Utils.formatDate(request.createdAt)}</p>
+                        ${request.question ? `<p><strong>Mechanic's Question:</strong> ${request.question}</p>` : ''}
+                        ${request.status === 'question' ? `
+                            <div style="margin-top: 1rem;">
+                                <button class="btn" onclick="contactMechanic('${request._id}')">Contact Mechanic</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            } catch (error) {
+                Utils.showError('Failed to load service requests');
+                document.getElementById('serviceRequestsList').innerHTML = '<p>Error loading service requests.</p>';
+            }
+        }
+
+        // Contact mechanic function (placeholder)
+        function contactMechanic(requestId) {
+            Utils.showNotification('Contact functionality would be implemented here', 'info');
+        }
+    </script>
+</body>
+</html>

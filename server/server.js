@@ -1,11 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const path = require('path');
 const authRoutes = require('./routes/auth');
 
 dotenv.config();
 const app = express();
 app.use(express.json());
+
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, '../public')));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/rough-auto', {

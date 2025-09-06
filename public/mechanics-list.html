@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Mechanics - Auto Service App</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Find Mechanics</h1>
+            <div class="nav">
+                <div class="nav-links">
+                    <a href="/customer-dashboard.html">Back to Dashboard</a>
+                    <a href="/create-request.html">Create Service Request</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Available Mechanics</h2>
+            <p>Choose a trusted mechanic for your vehicle service needs.</p>
+        </div>
+
+        <div id="mechanicsList">
+            <div class="loading">Loading mechanics...</div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Ensure user is authenticated and is a customer
+        if (!requireAuth()) {
+            // Exit early if not authenticated
+        } else {
+            const user = Auth.getCurrentUser();
+            if (user.userType !== 'customer') {
+                Utils.showError('Access denied. Customer account required.');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                // Load mechanics on page load
+                loadMechanics();
+            }
+        }
+
+        // Load mechanics on page load
+        async function loadMechanics() {
+            try {
+                const mechanics = await Lists.getMechanics();
+                const container = document.getElementById('mechanicsList');
+                
+                if (mechanics.length === 0) {
+                    container.innerHTML = '<div class="card"><p>No mechanics available at the moment.</p></div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <div class="mechanics-grid">
+                        ${mechanics.map(mechanic => `
+                            <div class="mechanic-card">
+                                <h3>${mechanic.mechanicName}</h3>
+                                <p><strong>Email:</strong> ${mechanic.email}</p>
+                                <p><strong>Mechanic ID:</strong> ${mechanic._id}</p>
+                                <button class="btn" onclick="createRequestForMechanic('${mechanic._id}', '${mechanic.mechanicName}')">
+                                    Request Service
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                Utils.showError('Failed to load mechanics');
+                document.getElementById('mechanicsList').innerHTML = '<div class="card"><p>Error loading mechanics.</p></div>';
+            }
+        }
+
+        // Create request for specific mechanic
+        function createRequestForMechanic(mechanicId, mechanicName) {
+            // Store mechanic info in session storage for the create request page
+            sessionStorage.setItem('selectedMechanic', JSON.stringify({
+                id: mechanicId,
+                name: mechanicName
+            }));
+            window.location.href = '/create-request.html';
+        }
+    </script>
+</body>
+</html>

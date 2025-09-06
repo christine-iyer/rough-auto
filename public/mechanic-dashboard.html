@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechanic Dashboard - Auto Service App</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>Mechanic Dashboard</h1>
+            <div class="nav">
+                <div class="nav-links">
+                    <a href="#" onclick="loadServiceRequests()" style="position: relative;">
+                        Service Requests
+                        <span id="openRequestsIndicator" class="open-requests-indicator hidden">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Welcome to Your Dashboard</h2>
+            <div id="userInfo">
+                <p>Loading user information...</p>
+            </div>
+        </div>
+
+        <div class="service-requests">
+            <div class="card">
+                <h3>Customer Service Requests</h3>
+                <div id="serviceRequestsList">
+                    <div class="loading">Loading service requests...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Ensure user is authenticated and is a mechanic
+        if (!requireAuth()) {
+            // Exit early if not authenticated
+        } else {
+            const user = Auth.getCurrentUser();
+            if (user.userType !== 'mechanic') {
+                Utils.showError('Access denied. Mechanic account required.');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                init();
+            }
+        }
+
+        function init() {
+            const user = Auth.getCurrentUser();
+            // Load user information
+            document.getElementById('userInfo').innerHTML = `
+                <p><strong>Mechanic ID:</strong> ${user.id}</p>
+                <p><strong>Account Type:</strong> ${Utils.capitalizeFirst(user.userType)}</p>
+            `;
+            
+            // Load data on page load
+            loadServiceRequests();
+
+            // Auto-refresh every 30 seconds to check for new requests
+            setInterval(loadServiceRequests, 30000);
+        }
+
+        // Load data on page load
+        async function loadServiceRequests() {
+            try {
+                const user = Auth.getCurrentUser();
+                const requests = await ServiceRequests.getByMechanic(user.id);
+                const container = document.getElementById('serviceRequestsList');
+                
+                if (requests.length === 0) {
+                    container.innerHTML = '<p>No service requests assigned to you yet.</p>';
+                    updateOpenRequestsIndicator(0);
+                    return;
+                }
+                
+                // Count open requests
+                const openRequests = requests.filter(r => r.status === 'pending').length;
+                updateOpenRequestsIndicator(openRequests);
+                
+                container.innerHTML = requests.map(request => `
+                    <div class="request-card ${request.status}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h4>Service Request from ${request.customer.customerName}</h4>
+                            <span class="status-badge status-${request.status}">${request.status}</span>
+                        </div>
+                        <p><strong>Customer Email:</strong> ${request.customer.email}</p>
+                        <p><strong>Vehicle:</strong> ${request.vehicle.year} ${request.vehicle.make} ${request.vehicle.model}</p>
+                        <p><strong>Description:</strong> ${request.description}</p>
+                        <p><strong>Created:</strong> ${Utils.formatDate(request.createdAt)}</p>
+                        ${request.question ? `<p><strong>Your Question:</strong> ${request.question}</p>` : ''}
+                        
+                        ${request.status === 'pending' ? `
+                            <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <button class="btn btn-success" onclick="updateRequestStatus('${request._id}', 'accepted')">
+                                    Accept
+                                </button>
+                                <button class="btn btn-danger" onclick="updateRequestStatus('${request._id}', 'rejected')">
+                                    Reject
+                                </button>
+                                <button class="btn btn-warning" onclick="askQuestion('${request._id}')">
+                                    Ask Question
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            } catch (error) {
+                Utils.showError('Failed to load service requests');
+                document.getElementById('serviceRequestsList').innerHTML = '<p>Error loading service requests.</p>';
+            }
+        }
+
+        // Update request status
+        async function updateRequestStatus(requestId, status) {
+            try {
+                await ServiceRequests.updateStatus(requestId, status);
+                Utils.showNotification(`Request ${status} successfully!`);
+                loadServiceRequests(); // Reload the list
+            } catch (error) {
+                Utils.showError(`Failed to ${status} request`);
+            }
+        }
+
+        // Ask question
+        async function askQuestion(requestId) {
+            const question = prompt('Enter your question for the customer:');
+            if (!question) return;
+            
+            try {
+                await ServiceRequests.updateStatus(requestId, 'question', question);
+                Utils.showNotification('Question sent to customer!');
+                loadServiceRequests(); // Reload the list
+            } catch (error) {
+                Utils.showError('Failed to send question');
+            }
+        }
+
+        // Update open requests indicator
+        function updateOpenRequestsIndicator(count) {
+            const indicator = document.getElementById('openRequestsIndicator');
+            if (count > 0) {
+                indicator.textContent = count;
+                indicator.classList.remove('hidden');
+            } else {
+                indicator.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
