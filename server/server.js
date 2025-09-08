@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const authRoutes = require('./routes/auth');
 
 dotenv.config();
 const app = express();
@@ -15,7 +14,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/rough-auto'
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/service-request', require('./routes/serviceRequest'));
 app.use('/api/list', require('./routes/list'));
 
