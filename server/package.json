@@ -13,6 +13,7 @@
     "buffer-equal-constant-time": "^1.0.1",
     "chokidar": "^3.6.0",
     "concat-map": "^0.0.1",
+    "cors": "^2.8.5",
     "debug": "^4.4.1",
     "ecdsa-sig-formatter": "^1.0.11",
     "fill-range": "^7.1.1",
