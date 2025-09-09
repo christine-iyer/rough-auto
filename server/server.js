@@ -10,7 +10,7 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/rough-auto', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-}).then(() => console.log('MongoDB connected'))
+}).then(() => console.log('MongoDB (Data baseconnected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
