@@ -12,7 +12,7 @@ export default function Signup({ onSignup }) {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('/api/auth/mechanic-signup', {
+      const res = await fetch('/api/auth/signup/mechanic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -27,7 +27,7 @@ export default function Signup({ onSignup }) {
   return (
     <form onSubmit={handleSubmit}>
       <h2>Mechanic Signup</h2>
-      <input name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
+      <input name="mechanicName" placeholder="Name" value={form.mechanicName} onChange={handleChange} required />
       <input name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
       <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} required />
       <button type="submit">Sign Up</button>

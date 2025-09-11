@@ -7,7 +7,7 @@ export default function ServiceRequests({ mechanicId, token }) {
   useEffect(() => {
     async function fetchRequests() {
       try {
-        const res = await fetch(`/api/service-request/mechanic/${mechanicId}`, {
+        const res = await fetch(`/api/mechanic/${mechanicId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!res.ok) throw new Error('Failed to fetch requests');
