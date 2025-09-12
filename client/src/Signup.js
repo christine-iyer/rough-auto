@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 export default function Signup({ onSignup }) {
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [form, setForm] = useState({ mechanicName: '', email: '', password: '' });
   const [error, setError] = useState('');
 
   const handleChange = e => {
