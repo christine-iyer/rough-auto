@@ -13,7 +13,7 @@ export default function ServiceRequests({ mechanicId, token }) {
         const res = await fetch(`/api/service-request/mechanic/${mechanicId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        if (!res.ok) throw new Error('Failed to fetch requests');
+        if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         setRequests(data);
       } catch (err) {
