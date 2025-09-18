@@ -19,6 +19,7 @@ router.post('/signup/customer', async (req, res) => {
     const token = jwt.sign({ id: customer._id, userType: 'customer' }, JWT_SECRET, { expiresIn: '1d' });
     res.json({ token });
   } catch (err) {
+    console.error('Customer signup error:', err);
     res.status(500).json({ error: err.message });
   }
 });

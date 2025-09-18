@@ -1,36 +1,51 @@
-
 import React, { useState } from 'react';
-import Signup from './Signup';
-import Login from './Login';
-import ServiceRequests from './ServiceRequests';
+import Login from './components/Login';
+import ServiceRequests from './components/ServiceRequests';
+import CustomerSignup from './components/CustomerSignup';
+import MechanicSignup from './components/MechanicSignup';
+import AdminSignup from './components/AdminSignup';
 
 function App() {
-  const [page, setPage] = useState('signup');
+  const [page, setPage] = useState('home');
   const [token, setToken] = useState('');
   const [mechanicId, setMechanicId] = useState('');
 
   const handleSignup = () => setPage('login');
   const handleLogin = (token, mechanicId) => {
     setToken(token);
-    setMechanicId(mechanicId);
+    setMechanicId(mechanicId || '');
     setPage('requests');
   };
   const handleLogout = () => {
     setToken('');
     setMechanicId('');
-    setPage('login');
+    setPage('home');
   };
 
   return (
     <div className="App">
       <nav>
-        {page === 'signup' && <button onClick={() => setPage('login')}>Go to Login</button>}
-        {page === 'login' && <button onClick={() => setPage('signup')}>Go to Signup</button>}
+        {page !== 'home' && <button onClick={() => setPage('home')}>Home</button>}
         {page === 'requests' && <button onClick={handleLogout}>Logout</button>}
       </nav>
-      {page === 'signup' && <Signup onSignup={handleSignup} />}
+      {page === 'home' && (
+        <div style={{ margin: '40px auto', maxWidth: 400, textAlign: 'center' }}>
+          <h2>Welcome! Who are you?</h2>
+          <button style={{ margin: '10px' }} onClick={() => setPage('customer-signup')}>Customer Create Account</button>
+          <button style={{ margin: '10px' }} onClick={() => setPage('mechanic-signup')}>Mechanic Create Account</button>
+          <button style={{ margin: '10px' }} onClick={() => setPage('admin-signup')}>Admin Create Account</button>
+          <button style={{ margin: '10px' }} onClick={() => setPage('login')}>Login</button>
+        </div>
+      )}
+      {page === 'customer-signup' && <CustomerSignup onSignup={handleSignup} />}
+      {page === 'mechanic-signup' && <MechanicSignup onSignup={handleSignup} />}
+      {page === 'admin-signup' && <AdminSignup onSignup={handleSignup} />}
       {page === 'login' && <Login onLogin={handleLogin} />}
-      {page === 'requests' && <ServiceRequests mechanicId={mechanicId} token={token} />}
+      {page === 'requests' && (
+        mechanicId
+          ? <ServiceRequests mechanicId={mechanicId} token={token} />
+          : <ServiceRequests token={token} />
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 
-export default function Login() {
+export default function Login({ onLogin }) {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [token, setToken] = useState(null);
@@ -25,10 +25,14 @@ export default function Login() {
       if (!res.ok) throw new Error('Login failed');
       const data = await res.json();
       setToken(data.token);
-      // Decode token to get userType (or get from response if available)
       const payload = JSON.parse(atob(data.token.split('.')[1]));
       setUserType(payload.userType);
-      if (payload.userType === 'mechanic') {
+      // Store user id for customer
+      if (payload.userType === 'customer') {
+        localStorage.setItem('customerId', payload.id);
+        if (onLogin) onLogin(data.token, '');
+      } else if (payload.userType === 'mechanic') {
+        if (onLogin) onLogin(data.token, payload.id);
         // Fetch mechanics
         const mechRes = await fetch('/api/list/mechanics', {
           headers: { Authorization: `Bearer ${data.token}` }
@@ -41,6 +45,8 @@ export default function Login() {
         });
         const srData = await srRes.json();
         setServiceRequests(srData);
+      } else if (payload.userType === 'admin') {
+        if (onLogin) onLogin(data.token, '');
       }
     } catch (err) {
       setError(err.message);
