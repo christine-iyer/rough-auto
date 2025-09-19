@@ -6,6 +6,10 @@ const mechanicSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   userType: { type: String, default: 'mechanic' },
+  services: { type: [String], default: [] },
+  notes: { type: String, default: '' },
+  files: { type: [String], default: [] }, // Store file paths or URLs
+  approved: { type: Boolean, default: false },
   serviceRequests: { type: [mongoose.Schema.Types.ObjectId], ref: 'ServiceRequest', default: [] }
 });
 
