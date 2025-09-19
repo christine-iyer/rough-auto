@@ -1,9 +1,13 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
 const Customer = require('../models/Customer');
 const Mechanic = require('../models/Mechanic');
 const Admin = require('../models/Admin');
+// Multer setup for file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'thisisasecret';
@@ -24,17 +28,34 @@ router.post('/signup/customer', async (req, res) => {
   }
 });
 
-// Mechanic Signup
-router.post('/signup/mechanic', async (req, res) => {
+// Mechanic Signup with file upload
+router.post('/signup/mechanic', upload.array('files'), async (req, res) => {
   try {
-    const { mechanicName, email, password } = req.body;
+    const { mechanicName, email, password, services, notes } = req.body;
     const existing = await Mechanic.findOne({ email });
     if (existing) return res.status(400).json({ error: 'Email already exists' });
-    const mechanic = new Mechanic({ mechanicName, email, password });
+    // Parse services array if sent as JSON string
+    let servicesArr = [];
+    try {
+      servicesArr = JSON.parse(services);
+    } catch {
+      servicesArr = Array.isArray(services) ? services : [];
+    }
+    // Prepare file info (for now, just store originalname; integrate Cloudinary later)
+    const uploadedFiles = req.files ? req.files.map(f => ({ originalname: f.originalname, mimetype: f.mimetype })) : [];
+    const mechanic = new Mechanic({
+      mechanicName,
+      email,
+      password,
+      services: servicesArr,
+      notes,
+      files: uploadedFiles
+    });
     await mechanic.save();
     const token = jwt.sign({ id: mechanic._id, userType: 'mechanic' }, JWT_SECRET, { expiresIn: '1d' });
     res.json({ token });
   } catch (err) {
+    console.error('Mechanic signup error:', err);
     res.status(500).json({ error: err.message });
   }
 });
