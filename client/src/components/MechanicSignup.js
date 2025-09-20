@@ -82,13 +82,19 @@ export default function MechanicSignup({ onSignup }) {
         </div>
         <div style={{ marginBottom: 12 }}>
           <label>Upload Documents/Photos:</label><br />
-          <UploadWidget onUpload={handleCloudinaryUpload}>
-            {({ open }) => (
-              <button type="button" onClick={e => { e.preventDefault(); open(); }}>
-                Upload via Cloudinary
-              </button>
-            )}
-          </UploadWidget>
+         <UploadWidget onUpload={handleCloudinaryUpload}>
+                {({ open }) => {
+                  function handleOnClick(e) {
+                    e.preventDefault();
+                    open();
+                  }
+                  return (
+                    <button onClick={handleOnClick}>
+                      Attach Photographic Evidence
+                    </button>
+                  );
+                }}
+              </UploadWidget>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
             {cloudinaryUrls.map((url, idx) => (
               <img key={idx} src={url} alt="Uploaded" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 4 }} />
