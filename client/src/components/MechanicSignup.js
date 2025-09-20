@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import UploadWidget from './UploadWidget';
 
 export default function MechanicSignup({ onSignup }) {
   const [form, setForm] = useState({ mechanicName: '', email: '', password: '', services: [], notes: '' });
-  const [files, setFiles] = useState([]);
+  const [cloudinaryUrls, setCloudinaryUrls] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
@@ -15,25 +16,31 @@ export default function MechanicSignup({ onSignup }) {
     setForm({ ...form, services: options });
   };
 
-  const handleFileChange = e => {
-    setFiles(Array.from(e.target.files));
+  // Cloudinary upload handler
+  const handleCloudinaryUpload = (error, result, widget) => {
+    if (error) return;
+    if (result.event === 'success') {
+      setCloudinaryUrls(urls => [...urls, result.info.secure_url]);
+    }
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setSuccess(false);
-  const data = new FormData();
-  data.append('mechanicName', form.mechanicName);
-  data.append('email', form.email);
-  data.append('password', form.password);
-  data.append('services', JSON.stringify(form.services));
-  data.append('notes', form.notes);
-  files.forEach((file, idx) => data.append('files', file));
+    const payload = {
+      mechanicName: form.mechanicName,
+      email: form.email,
+      password: form.password,
+      services: form.services,
+      notes: form.notes,
+      cloudinaryUrls
+    };
     try {
       const res = await fetch('/api/auth/signup/mechanic', {
         method: 'POST',
-        body: data
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error('Signup failed');
       setSuccess(true);
@@ -75,7 +82,18 @@ export default function MechanicSignup({ onSignup }) {
         </div>
         <div style={{ marginBottom: 12 }}>
           <label>Upload Documents/Photos:</label><br />
-          <input type="file" multiple onChange={handleFileChange} />
+          <UploadWidget onUpload={handleCloudinaryUpload}>
+            {({ open }) => (
+              <button type="button" onClick={e => { e.preventDefault(); open(); }}>
+                Upload via Cloudinary
+              </button>
+            )}
+          </UploadWidget>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+            {cloudinaryUrls.map((url, idx) => (
+              <img key={idx} src={url} alt="Uploaded" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 4 }} />
+            ))}
+          </div>
         </div>
         <div style={{ marginBottom: 12 }}>
           <label>Miscellaneous Notes:</label><br />
