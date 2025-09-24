@@ -13,45 +13,46 @@ export default function Login({ onLogin }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    setError('');
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+const handleSubmit = async e => {
+  e.preventDefault();
+  setError('');
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    });
+    if (!res.ok) throw new Error('Login failed');
+    const data = await res.json();
+    setToken(data.token);
+    localStorage.setItem('token', data.token); // <-- Store token here!
+    const payload = JSON.parse(atob(data.token.split('.')[1]));
+    setUserType(payload.userType);
+    // Store user id for customer
+    if (payload.userType === 'customer') {
+      localStorage.setItem('customerId', payload.id);
+      if (onLogin) onLogin(data.token, '');
+    } else if (payload.userType === 'mechanic') {
+      if (onLogin) onLogin(data.token, payload.id);
+      // Fetch mechanics
+      const mechRes = await fetch('/api/list/mechanics', {
+        headers: { Authorization: `Bearer ${data.token}` }
       });
-      if (!res.ok) throw new Error('Login failed');
-      const data = await res.json();
-      setToken(data.token);
-      const payload = JSON.parse(atob(data.token.split('.')[1]));
-      setUserType(payload.userType);
-      // Store user id for customer
-      if (payload.userType === 'customer') {
-        localStorage.setItem('customerId', payload.id);
-        if (onLogin) onLogin(data.token, '');
-      } else if (payload.userType === 'mechanic') {
-        if (onLogin) onLogin(data.token, payload.id);
-        // Fetch mechanics
-        const mechRes = await fetch('/api/list/mechanics', {
-          headers: { Authorization: `Bearer ${data.token}` }
-        });
-        const mechanicsData = await mechRes.json();
-        setMechanics(mechanicsData);
-        // Fetch service requests for this mechanic
-        const srRes = await fetch(`/api/service-request/mechanic/${payload.id}`, {
-          headers: { Authorization: `Bearer ${data.token}` }
-        });
-        const srData = await srRes.json();
-        setServiceRequests(srData);
-      } else if (payload.userType === 'admin') {
-        if (onLogin) onLogin(data.token, '');
-      }
-    } catch (err) {
-      setError(err.message);
+      const mechanicsData = await mechRes.json();
+      setMechanics(mechanicsData);
+      // Fetch service requests for this mechanic
+      const srRes = await fetch(`/api/service-request/mechanic/${payload.id}`, {
+        headers: { Authorization: `Bearer ${data.token}` }
+      });
+      const srData = await srRes.json();
+      setServiceRequests(srData);
+    } else if (payload.userType === 'admin') {
+      if (onLogin) onLogin(data.token, '');
     }
-  };
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   if (token && userType === 'mechanic') {
     return (

@@ -9,7 +9,7 @@ function MechanicList() {
 
 		useEffect(() => {
 			const token = localStorage.getItem('token');
-				fetch('http://localhost:5001/api/list/mechanics', {
+				fetch('/api/list/mechanics', {
 					headers: {
 						'Authorization': `Bearer ${token}`,
 						'Content-Type': 'application/json',
