@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Login from './components/Login';
-import ServiceRequests from './components/ServiceRequests';
+import MechanicList  from './components/MechanicList';
 import CustomerSignup from './components/CustomerSignup';
 import MechanicSignup from './components/MechanicSignup';
 import AdminSignup from './components/AdminSignup';
@@ -35,17 +35,14 @@ function App() {
           <button style={{ margin: '10px' }} onClick={() => setPage('mechanic-signup')}>Mechanic Create Account</button>
           <button style={{ margin: '10px' }} onClick={() => setPage('admin-signup')}>Admin Create Account</button>
           <button style={{ margin: '10px' }} onClick={() => setPage('login')}>Login</button>
+          <button style={{ margin: '10px' }} onClick={() => setPage('list/mechanics')}>View Mechanics</button>
         </div>
       )}
       {page === 'customer-signup' && <CustomerSignup onSignup={handleSignup} />}
       {page === 'mechanic-signup' && <MechanicSignup onSignup={handleSignup} />}
       {page === 'admin-signup' && <AdminSignup onSignup={handleSignup} />}
       {page === 'login' && <Login onLogin={handleLogin} />}
-      {page === 'requests' && (
-        mechanicId
-          ? <ServiceRequests mechanicId={mechanicId} token={token} />
-          : <ServiceRequests token={token} />
-      )}
+      {page === 'list/mechanics' && <MechanicList />}
     </div>
   );
 }

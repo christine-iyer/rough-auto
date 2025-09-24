@@ -1,5 +1,18 @@
 # Next Steps
 
+# List of Mechanics and Mechanic Dashboard FrontEnd
+
+## Features
+
+- Mechanic signup and login
+- List of mechanics and their services **for customer shopping**, ie, everyone has access.
+- Mechanic Dashboard
+   - View job requests (pending customer requests. Consider best practices for job bidding requests)
+   - Change settings. (Turn notifications on and off)
+   - Edit profile. (Change pricing, services, etc)
+   - Analytics. (Time from job request to decision, missed jobs, ratings)
+
+
 # AutoApp Backend
 
 This is the backend for the AutoApp MERN stack project. It provides RESTful API endpoints for user authentication and management using MongoDB Atlas, Express, JWT, and bcrypt.
