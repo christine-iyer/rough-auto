@@ -25,7 +25,7 @@ function MechanicDashboard({ mechanicId }) {
                 setLoading(false);
             });
         // Fetch pending requests
-        fetch(`/api/service-request/mechanic/${mechanicId}?status=pending`, {
+        fetch(fetch(`/api/service-request/mechanic/${mechanicId}`), {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(res => res.json())
