@@ -52,7 +52,7 @@ function MechanicDashboard({ mechanicId }) {
     setProfileMsg('');
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`/api/list/mechanics/${mechanicId}`, {
+      const res = await fetch(`/api/edit-mechanic/${mechanicId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
