@@ -51,7 +51,7 @@ router.patch('/:id', auth, async (req, res) => {
 // Get all service requests for a mechanic
 router.get('/mechanic/:mechanicId', auth, async (req, res) => {
   try {
-    const requests = await ServiceRequest.find({ mechanic: req.params.mechanicId }).populate('mechanic').populate('vehicle');
+    const requests = await ServiceRequest.find({ mechanic: req.params.mechanicId }).populate('customer').populate('vehicle');
     res.json(requests);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -61,7 +61,7 @@ router.get('/mechanic/:mechanicId', auth, async (req, res) => {
 // Get all service requests for a customer
 router.get('/customer/:customerId', auth, async (req, res) => {
   try {
-    const requests = await ServiceRequest.find({ customer: req.params.customerId }).populate('customer').populate('vehicle');
+    const requests = await ServiceRequest.find({ customer: req.params.customerId }).populate('mechanic').populate('vehicle');
     console.log(requests);
     res.json(requests);
   } catch (err) {
