@@ -82,12 +82,13 @@ function MechanicDashboard({ mechanicId }) {
             <div><strong>Services:</strong> {profile.services && profile.services.join(', ')}</div>
             <div><strong>Notes:</strong> {profile.notes}</div>
             <button onClick={() => {
+              // Always set form state from latest profile data
               setForm({
                 mechanicName: profile.mechanicName || '',
                 email: profile.email || '',
-                services: profile.services || [],
+                services: Array.isArray(profile.services) ? profile.services : [],
                 notes: profile.notes || '',
-                files: profile.files || []
+                files: Array.isArray(profile.files) ? profile.files : []
               });
               setEditMode(true);
             }}>Edit Profile</button>
@@ -96,10 +97,10 @@ function MechanicDashboard({ mechanicId }) {
         ) : (
           <form onSubmit={handleProfileSubmit} style={{ marginBottom: 12 }}>
             <div>
-              <label>Name: <input name="mechanicName" value={form.mechanicName} onChange={handleProfileChange} required placeholder={profile?.mechanicName || ''} /></label>
+              <label>Name: <input name="mechanicName" value={form.mechanicName} onChange={handleProfileChange} required /></label>
             </div>
             <div>
-              <label>Email: <input name="email" value={form.email} onChange={handleProfileChange} required placeholder={profile?.email || ''} /></label>
+              <label>Email: <input name="email" value={form.email} onChange={handleProfileChange} required /></label>
             </div>
             <div>
               <label>Services:
@@ -112,12 +113,12 @@ function MechanicDashboard({ mechanicId }) {
                   <option value="Other">Other</option>
                 </select>
                 <div style={{ fontSize: '0.9em', color: '#888', marginTop: 4 }}>
-                  Current: {profile?.services?.length ? profile.services.join(', ') : 'None'}
+                  Current: {form.services.length ? form.services.join(', ') : 'None'}
                 </div>
               </label>
             </div>
             <div>
-              <label>Notes: <textarea name="notes" value={form.notes} onChange={handleProfileChange} placeholder={profile?.notes || ''} /></label>
+              <label>Notes: <textarea name="notes" value={form.notes} onChange={handleProfileChange} /></label>
             </div>
             <button type="submit">Save</button>
             <button type="button" onClick={() => setEditMode(false)} style={{ marginLeft: 8 }}>Cancel</button>
