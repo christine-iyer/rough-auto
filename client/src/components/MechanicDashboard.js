@@ -18,20 +18,28 @@ function MechanicDashboard({ mechanicId }) {
         setPendingRequests(Array.isArray(data) ? data : []);
         setLoading(false);
       });
-    // Fetch mechanic profile
-    fetch(`/api/list/mechanics/${mechanicId}`, {
+    // Fetch mechanic profile from correct route
+    fetch(`/api/edit-mechanic/${mechanicId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(res => res.json())
-      .then(data => {
-        setProfile(data);
-        setForm({
-          mechanicName: data.mechanicName || '',
-          email: data.email || '',
-          services: data.services || [],
-          notes: data.notes || '',
-          files: data.files || []
-        });
+      .then(async res => {
+        if (!res.ok) {
+          setProfile(null);
+          return;
+        }
+        try {
+          const data = await res.json();
+          setProfile(data);
+          setForm({
+            mechanicName: data.mechanicName || '',
+            email: data.email || '',
+            services: Array.isArray(data.services) ? data.services : [],
+            notes: data.notes || '',
+            files: Array.isArray(data.files) ? data.files : []
+          });
+        } catch {
+          setProfile(null);
+        }
       });
   }, [mechanicId]);
 
