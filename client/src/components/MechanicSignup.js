@@ -23,6 +23,28 @@ export default function MechanicSignup({ onSignup }) {
   };
 
   // Cloudinary upload handler
+
+  // old code 
+  // function handleOnUpload(error, result, widget) {
+  //   if (error) {
+  //     updateError(error);
+  //     widget.close({
+  //       quiet: true
+  //     });
+  //     return;
+  //   }
+  //   console.dir(result);
+  //   updateUrl(result?.info?.secure_url);
+  //   console.dir(url);
+  //   setBlahg({
+  //     title: '',
+  //     author: '',
+  //     category: '',
+  //     text: '',
+  //     image: result?.info?.secure_url,
+  //     like: 0
+  //   })
+  // }
   const handleUpload = (error, result) => {
     if (!error && result.event === 'success') {
       const url = result.info.secure_url;
