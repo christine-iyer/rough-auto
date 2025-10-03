@@ -1,12 +1,4 @@
-// TEMP DEBUG: List all mechanics and their _id values
-router.get('/debug/all', async (req, res) => {
-	try {
-		const mechanics = await Mechanic.find({}, 'mechanicName _id');
-		res.json(mechanics);
-	} catch (err) {
-		res.status(500).json({ error: err.message });
-	}
-});
+
 const express = require('express');
 const router = express.Router();
 const Mechanic = require('../models/Mechanic');
