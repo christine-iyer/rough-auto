@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 import UploadWidget from './UploadWidget';
 
 export default function MechanicSignup({ onSignup }) {
-  const [form, setForm] = useState({ mechanicName: '', email: '', password: '', services: [], notes: '' });
-  const [cloudinaryUrls, setCloudinaryUrls] = useState([]);
+  const [form, setForm] = useState({
+    mechanicName: '',
+    email: '',
+    password: '',
+    services: [],
+    notes: '',
+    files: [] // <-- store uploaded URLs here
+  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
@@ -17,10 +23,13 @@ export default function MechanicSignup({ onSignup }) {
   };
 
   // Cloudinary upload handler
-  const handleCloudinaryUpload = (error, result, widget) => {
-    if (error) return;
-    if (result.event === 'success') {
-      setCloudinaryUrls(urls => [...urls, result.info.secure_url]);
+  const handleUpload = (error, result) => {
+    if (!error && result.event === 'success') {
+      const url = result.info.secure_url;
+      setForm(f => ({
+        ...f,
+        files: [...f.files, url]
+      }));
     }
   };
 
@@ -34,7 +43,7 @@ export default function MechanicSignup({ onSignup }) {
       password: form.password,
       services: form.services,
       notes: form.notes,
-      cloudinaryUrls
+      files: form.files // <-- send files array to backend
     };
     try {
       const res = await fetch('/api/auth/signup/mechanic', {
@@ -53,10 +62,9 @@ export default function MechanicSignup({ onSignup }) {
   return (
     <div style={{ maxWidth: 400, margin: '40px auto', padding: 20, border: '1px solid #ccc', borderRadius: 8 }}>
       <h2>Mechanic Signup</h2>
-        <div>
-          <label>Mechanic signup requires admin approval. If you have approval, please provide the necessary details. If you do not have approval, please contact an admin.</label>
-          
-        </div>
+      <div>
+        <label>Mechanic signup requires admin approval. If you have approval, please provide the necessary details. If you do not have approval, please contact an admin.</label>
+      </div>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: 12 }}>
           <label>Name:</label><br />
@@ -82,21 +90,15 @@ export default function MechanicSignup({ onSignup }) {
         </div>
         <div style={{ marginBottom: 12 }}>
           <label>Upload Documents/Photos:</label><br />
-         <UploadWidget onUpload={handleCloudinaryUpload}>
-                {({ open }) => {
-                  function handleOnClick(e) {
-                    e.preventDefault();
-                    open();
-                  }
-                  return (
-                    <button onClick={handleOnClick}>
-                      Attach Photographic Evidence
-                    </button>
-                  );
-                }}
-              </UploadWidget>
+          <UploadWidget onUpload={handleUpload}>
+            {({ open }) => (
+              <button type="button" onClick={open}>
+                Upload Photo
+              </button>
+            )}
+          </UploadWidget>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-            {cloudinaryUrls.map((url, idx) => (
+            {form.files.map((url, idx) => (
               <img key={idx} src={url} alt="Uploaded" style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 4 }} />
             ))}
           </div>
