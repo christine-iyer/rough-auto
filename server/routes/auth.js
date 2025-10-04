@@ -31,7 +31,7 @@ router.post('/signup/customer', async (req, res) => {
 // Mechanic Signup with file upload
 router.post('/signup/mechanic', upload.array('files'), async (req, res) => {
   try {
-    const { mechanicName, email, password, services, notes } = req.body;
+    const { mechanicName, email, password, services, files,notes } = req.body;
     const existing = await Mechanic.findOne({ email });
     if (existing) return res.status(400).json({ error: 'Email already exists' });
     // Parse services array if sent as JSON string

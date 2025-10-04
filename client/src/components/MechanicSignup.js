@@ -59,6 +59,7 @@ export default function MechanicSignup({ onSignup }) {
     e.preventDefault();
     setError('');
     setSuccess(false);
+    console.log('Submitting payload:', form);
     const payload = {
       mechanicName: form.mechanicName,
       email: form.email,
