@@ -28,12 +28,13 @@ router.post('/signup/customer', async (req, res) => {
   }
 });
 
-// Mechanic Signup with file upload
-router.post('/signup/mechanic', upload.array('files'), async (req, res) => {
+// Mechanic Signup (accepts Cloudinary URLs in files array)
+router.post('/signup/mechanic', async (req, res) => {
   try {
-    const { mechanicName, email, password, services, files,notes } = req.body;
+    const { mechanicName, email, password, services, files, notes } = req.body;
     const existing = await Mechanic.findOne({ email });
     if (existing) return res.status(400).json({ error: 'Email already exists' });
+
     // Parse services array if sent as JSON string
     let servicesArr = [];
     try {
@@ -41,15 +42,22 @@ router.post('/signup/mechanic', upload.array('files'), async (req, res) => {
     } catch {
       servicesArr = Array.isArray(services) ? services : [];
     }
-    // Prepare file info (for now, just store originalname; integrate Cloudinary later)
-    const uploadedFiles = req.files ? req.files.map(f => ({ originalname: f.originalname, mimetype: f.mimetype })) : [];
+
+    // Parse files array if sent as JSON string
+    let filesArr = [];
+    try {
+      filesArr = typeof files === 'string' ? JSON.parse(files) : files;
+    } catch {
+      filesArr = Array.isArray(files) ? files : [];
+    }
+
     const mechanic = new Mechanic({
       mechanicName,
       email,
       password,
       services: servicesArr,
       notes,
-      files: uploadedFiles
+      files: filesArr // <-- Save Cloudinary URLs directly
     });
     await mechanic.save();
     const token = jwt.sign({ id: mechanic._id, userType: 'mechanic' }, JWT_SECRET, { expiresIn: '1d' });
