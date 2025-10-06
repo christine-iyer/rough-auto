@@ -31,7 +31,7 @@ export default function ServiceRequests({ mechanicId, token }) {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await fetch('/api/list/services');
+        const res = await fetch('/api/services');
         if (!res.ok) throw new Error('Failed to fetch services');
         const data = await res.json();
         setServices(data);
@@ -133,18 +133,15 @@ export default function ServiceRequests({ mechanicId, token }) {
               style={{ marginLeft: '10px' }}
             >
               <option value="">Select Service</option>
-              {/* Debug: Show services array */}
-              {/* Remove after confirming */}
-              {/* <pre>{JSON.stringify(services, null, 2)}</pre> */}
               {services.length === 0 && (
                 <option disabled>No services available</option>
               )}
               {services.map(s => (
                 <option
-                  key={s._id || s.id || s.name}
-                  value={s.name || s.service || ''}
+                  key={typeof s === 'string' ? s : (s._id || s.id || s.name)}
+                  value={typeof s === 'string' ? s : (s.name || s.service || '')}
                 >
-                  {s.name || s.service || 'Unnamed Service'}
+                  {typeof s === 'string' ? s : (s.name || s.service || 'Unnamed Service')}
                 </option>
               ))}
             </select>

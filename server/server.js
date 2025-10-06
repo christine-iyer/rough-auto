@@ -24,6 +24,7 @@ app.use('/api/list', require('./routes/list'));
 app.use('/api/edit-mechanic', require('./routes/editMechanicProfile'));
 // for /api/edit-customer/:customerId
 app.use('/api/edit-customer', require('./routes/editCustomerProfile'));               
-
+// for /api/services
+app.use('/api/services', require('./routes/list'));
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
