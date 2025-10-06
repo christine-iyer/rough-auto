@@ -15,7 +15,7 @@ export default function ServiceRequests({ mechanicId, token }) {
     const fetchRequests = async () => {
       try {
         const res = await fetch(`/api/service-request/mechanic/${mechanicId}`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
@@ -31,7 +31,9 @@ export default function ServiceRequests({ mechanicId, token }) {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await fetch('/api/services');
+        const res = await fetch('/api/services', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
         if (!res.ok) throw new Error('Failed to fetch services');
         const data = await res.json();
         setServices(data);
@@ -40,7 +42,7 @@ export default function ServiceRequests({ mechanicId, token }) {
       }
     };
     fetchServices();
-  }, []);
+  }, [token]);
 
   // Fetch mechanics for selected service
   useEffect(() => {
@@ -50,7 +52,12 @@ export default function ServiceRequests({ mechanicId, token }) {
         return;
       }
       try {
-        const res = await fetch(`/api/list/mechanics?service=${encodeURIComponent(selectedService)}`);
+        const res = await fetch(
+          `/api/list/mechanics?service=${encodeURIComponent(selectedService)}`,
+          {
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
+          }
+        );
         if (!res.ok) throw new Error('Failed to fetch mechanics');
         const data = await res.json();
         setMechanics(data);
@@ -59,7 +66,7 @@ export default function ServiceRequests({ mechanicId, token }) {
       }
     };
     fetchMechanics();
-  }, [selectedService]);
+  }, [selectedService, token]);
 
   const handleFormChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -73,9 +80,13 @@ export default function ServiceRequests({ mechanicId, token }) {
     e.preventDefault();
     const customerId = localStorage.getItem('customerId');
     try {
-      const res = await fetch('/api/serviceRequest', {
+      // Make sure the endpoint matches your backend route
+      const res = await fetch('/api/service-request', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({
           customerId,
           description: formData.description,
@@ -83,7 +94,10 @@ export default function ServiceRequests({ mechanicId, token }) {
           service: formData.service
         })
       });
-      if (!res.ok) throw new Error('Failed to create request');
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Failed to create request: ${res.status} ${errText}`);
+      }
       const newRequest = await res.json();
       setRequests([...requests, newRequest]);
       setShowForm(false);
@@ -168,6 +182,9 @@ export default function ServiceRequests({ mechanicId, token }) {
               disabled={!selectedService}
             >
               <option value="">Select Mechanic</option>
+              {mechanics.length === 0 && (
+                <option disabled>No mechanics available</option>
+              )}
               {mechanics.map(m => (
                 <option key={m._id || m.id} value={m._id || m.id}>{m.name}</option>
               ))}
@@ -177,13 +194,14 @@ export default function ServiceRequests({ mechanicId, token }) {
           <button type="button" onClick={() => setShowForm(false)} style={{ marginLeft: '10px' }}>Cancel</button>
         </form>
       )}
-      {/* Debug output for services */}
+      {/* Debug output for mechanics */}
       <div style={{background:'#eee',padding:'8px',marginBottom:'8px'}}>
         <strong>Debug Info:</strong><br/>
         mechanicId: {mechanicId ? mechanicId : 'undefined'}<br/>
         token: {token ? token.substring(0, 20) + '...' : 'undefined'}<br/>
         requests: <pre style={{maxHeight:'100px',overflow:'auto'}}>{JSON.stringify(requests, null, 2)}</pre>
         services: <pre style={{maxHeight:'100px',overflow:'auto'}}>{JSON.stringify(services, null, 2)}</pre>
+        mechanics: <pre style={{maxHeight:'100px',overflow:'auto'}}>{JSON.stringify(mechanics, null, 2)}</pre>
       </div>
       {error && <div style={{color:'red'}}>{error}</div>}
       <ul>
