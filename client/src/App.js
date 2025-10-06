@@ -5,6 +5,7 @@ import CustomerSignup from './components/CustomerSignup';
 import MechanicSignup from './components/MechanicSignup';
 import AdminSignup from './components/AdminSignup';
 import MechanicDashboard from './components/MechanicDashboard'; // <-- Import the dashboard
+import ServiceRequests from './components/ServiceRequests'; // <-- Import the service request component
 
 function App() {
   const [page, setPage] = useState('home');
@@ -37,13 +38,15 @@ function App() {
           <button style={{ margin: '10px' }} onClick={() => setPage('admin-signup')}>Admin Create Account</button>
           <button style={{ margin: '10px' }} onClick={() => setPage('login')}>Login</button>
           <button style={{ margin: '10px' }} onClick={() => setPage('list/mechanics')}>View Mechanics</button>
-          <button style={{ margin: '10px' }} onClick={() => setPage('mechanic-dashboard')}>Mechanic Dashboard</button> {/* New option */}
+          <button style={{ margin: '10px' }} onClick={() => setPage('mechanic-dashboard')}>Mechanic Dashboard</button>
+          <button style={{ margin: '10px' }} onClick={() => setPage('service-request')}>Make Service Request</button> {/* New option for service request */}
         </div>
       )}
       {page === 'customer-signup' && <CustomerSignup onSignup={handleSignup} />}
       {page === 'mechanic-signup' && <MechanicSignup onSignup={handleSignup} />}
       {page === 'admin-signup' && <AdminSignup onSignup={handleSignup} />}
       {page === 'login' && <Login onLogin={handleLogin} />}
+      {page === 'service-request' && <ServiceRequests token={token} />} {/* Render service request component */}
       {page === 'list/mechanics' && <MechanicList />}
       {page === 'mechanic-dashboard' && <MechanicDashboard mechanicId={mechanicId} />} {/* Render dashboard */}
     </div>
