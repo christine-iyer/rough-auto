@@ -12,9 +12,12 @@ router.post('/', auth, async (req, res) => {
     const { mechanicId, vehicle, description } = req.body;
     const customerId = req.user.id;
     const serviceRequest = new ServiceRequest({
-      customer: customerId,
-      mechanic: mechanicId,
-      vehicle,
+      customerId,
+      mechanicId,
+      service: vehicle.service,
+      vehicleMake: vehicle.vehicleMake,
+      vehicleModel: vehicle.vehicleModel,
+      vehicleYear: vehicle.vehicleYear,
       description,
       status: 'pending'
     });

@@ -9,7 +9,14 @@ export default function ServiceRequests({ mechanicId, token }) {
   const [services, setServices] = useState([]);
   const [selectedService, setSelectedService] = useState('');
   const [mechanics, setMechanics] = useState([]);
-  const [formData, setFormData] = useState({ description: '', mechanicId: '', service: '' });
+  const [formData, setFormData] = useState({
+    description: '',
+    mechanicId: '',
+    service: '',
+    vehicleMake: '',
+    vehicleModel: '',
+    vehicleYear: ''
+  });
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -80,7 +87,6 @@ export default function ServiceRequests({ mechanicId, token }) {
     e.preventDefault();
     const customerId = localStorage.getItem('customerId');
     try {
-      // Make sure the endpoint matches your backend route
       const res = await fetch('/api/service-request', {
         method: 'POST',
         headers: {
@@ -91,7 +97,12 @@ export default function ServiceRequests({ mechanicId, token }) {
           customerId,
           description: formData.description,
           mechanicId: formData.mechanicId,
-          service: formData.service
+          service: formData.service,
+          vehicle: {
+            vehicleMake: formData.vehicleMake,
+            vehicleModel: formData.vehicleModel,
+            vehicleYear: formData.vehicleYear
+          }
         })
       });
       if (!res.ok) {
@@ -101,7 +112,14 @@ export default function ServiceRequests({ mechanicId, token }) {
       const newRequest = await res.json();
       setRequests([...requests, newRequest]);
       setShowForm(false);
-      setFormData({ description: '', mechanicId: '', service: '' });
+      setFormData({
+        description: '',
+        mechanicId: '',
+        service: '',
+        vehicleMake: '',
+        vehicleModel: '',
+        vehicleYear: ''
+      });
       setError('');
     } catch (err) {
       setError(err.message);
@@ -131,6 +149,14 @@ export default function ServiceRequests({ mechanicId, token }) {
     }
   };
 
+  // Filter mechanics to only those who offer the selected service
+  const filteredMechanics = mechanics.filter(m =>
+    Array.isArray(m.services) &&
+    m.services.length > 0 &&
+    selectedService &&
+    m.services.includes(selectedService)
+  );
+
   return (
     <div>
       <h2>Service Requests</h2>
@@ -150,9 +176,9 @@ export default function ServiceRequests({ mechanicId, token }) {
               {services.length === 0 && (
                 <option disabled>No services available</option>
               )}
-              {services.map(s => (
+              {services.map((s, idx) => (
                 <option
-                  key={typeof s === 'string' ? s : (s._id || s.id || s.name)}
+                  key={typeof s === 'string' ? s : (s._id || s.id || `${s.name}-${idx}`)}
                   value={typeof s === 'string' ? s : (s.name || s.service || '')}
                 >
                   {typeof s === 'string' ? s : (s.name || s.service || 'Unnamed Service')}
@@ -160,6 +186,19 @@ export default function ServiceRequests({ mechanicId, token }) {
               ))}
             </select>
           </div>
+          {/* Show filtered mechanics list after service selection */}
+          {selectedService && filteredMechanics.length > 0 && (
+            <div style={{ marginBottom: '10px', background: '#f1f1f1', padding: '8px', borderRadius: '6px' }}>
+              <strong>Mechanics who perform "{selectedService}":</strong>
+              <ul style={{ margin: '8px 0 0 0', paddingLeft: '18px' }}>
+                {filteredMechanics.map((m, idx) => (
+                  <li key={m._id || m.id || `${m.name}-${idx}`}>
+                    {m.name || m.email || 'Unnamed Mechanic'}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div style={{ marginBottom: '10px' }}>
             <label>Description:</label>
             <input
@@ -169,6 +208,39 @@ export default function ServiceRequests({ mechanicId, token }) {
               onChange={handleFormChange}
               required
               style={{ marginLeft: '10px', width: '60%' }}
+            />
+          </div>
+          <div style={{ marginBottom: '10px' }}>
+            <label>Vehicle Make:</label>
+            <input
+              type="text"
+              name="vehicleMake"
+              value={formData.vehicleMake}
+              onChange={handleFormChange}
+              required
+              style={{ marginLeft: '10px', width: '40%' }}
+            />
+          </div>
+          <div style={{ marginBottom: '10px' }}>
+            <label>Vehicle Model:</label>
+            <input
+              type="text"
+              name="vehicleModel"
+              value={formData.vehicleModel}
+              onChange={handleFormChange}
+              required
+              style={{ marginLeft: '10px', width: '40%' }}
+            />
+          </div>
+          <div style={{ marginBottom: '10px' }}>
+            <label>Vehicle Year:</label>
+            <input
+              type="text"
+              name="vehicleYear"
+              value={formData.vehicleYear}
+              onChange={handleFormChange}
+              required
+              style={{ marginLeft: '10px', width: '40%' }}
             />
           </div>
           <div style={{ marginBottom: '10px' }}>
@@ -182,11 +254,16 @@ export default function ServiceRequests({ mechanicId, token }) {
               disabled={!selectedService}
             >
               <option value="">Select Mechanic</option>
-              {mechanics.length === 0 && (
-                <option disabled>No mechanics available</option>
+              {filteredMechanics.length === 0 && (
+                <option disabled>No mechanics available for this service</option>
               )}
-              {mechanics.map(m => (
-                <option key={m._id || m.id} value={m._id || m.id}>{m.name}</option>
+              {filteredMechanics.map((m, idx) => (
+                <option
+                  key={m._id || m.id || `${m.name}-${idx}`}
+                  value={m._id || m.id || ''}
+                >
+                  {m.name || m.email || 'Unnamed Mechanic'}
+                </option>
               ))}
             </select>
           </div>
@@ -194,30 +271,21 @@ export default function ServiceRequests({ mechanicId, token }) {
           <button type="button" onClick={() => setShowForm(false)} style={{ marginLeft: '10px' }}>Cancel</button>
         </form>
       )}
-      {/* Debug output for mechanics */}
-      <div style={{background:'#eee',padding:'8px',marginBottom:'8px'}}>
-        <strong>Debug Info:</strong><br/>
-        mechanicId: {mechanicId ? mechanicId : 'undefined'}<br/>
-        token: {token ? token.substring(0, 20) + '...' : 'undefined'}<br/>
-        requests: <pre style={{maxHeight:'100px',overflow:'auto'}}>{JSON.stringify(requests, null, 2)}</pre>
-        services: <pre style={{maxHeight:'100px',overflow:'auto'}}>{JSON.stringify(services, null, 2)}</pre>
-        mechanics: <pre style={{maxHeight:'100px',overflow:'auto'}}>{JSON.stringify(mechanics, null, 2)}</pre>
-      </div>
       {error && <div style={{color:'red'}}>{error}</div>}
       <ul>
         {requests.map(r => (
-          <li key={r.serviceRequestId}>
+          <li key={r._id || r.serviceRequestId || r.id}>
             {r.description || 'No description'} - Status: {r.status}
             <select
-              value={editStatus[r.serviceRequestId] || r.status}
-              onChange={e => handleStatusChange(r.serviceRequestId, e.target.value)}
+              value={editStatus[r._id || r.serviceRequestId || r.id] || r.status}
+              onChange={e => handleStatusChange(r._id || r.serviceRequestId || r.id, e.target.value)}
               style={{ marginLeft: '10px' }}
             >
               {statusOptions.map(opt => (
                 <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
-            <button onClick={() => handleUpdate(r.serviceRequestId)} style={{ marginLeft: '10px', background:'#4CAF50',color:'white',border:'none',padding:'6px 12px',borderRadius:'4px',cursor:'pointer' }}>
+            <button onClick={() => handleUpdate(r._id || r.serviceRequestId || r.id)} style={{ marginLeft: '10px', background:'#4CAF50',color:'white',border:'none',padding:'6px 12px',borderRadius:'4px',cursor:'pointer' }}>
               Update
             </button>
           </li>

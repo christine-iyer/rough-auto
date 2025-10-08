@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 
 const serviceRequestSchema = new mongoose.Schema({
-  customer: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
-  mechanic: { type: mongoose.Schema.Types.ObjectId, ref: 'Mechanic' },
+  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
+  mechanicId: { type: mongoose.Schema.Types.ObjectId, ref: 'Mechanic' },
+  service: { type: String, required: true },
   vehicle: {
-    make: { type: String, required: true },
-    model: { type: String, required: true },
-    year: { type: Number, required: true }
+    vehicleMake: { type: String, required: true },
+    vehicleModel: { type: String, required: true },
+    vehicleYear: { type: Number, required: true }
   },
   description: { type: String, required: true },
   status: { type: String, enum: ['pending', 'accepted', 'rejected', 'question'], default: 'pending' },
