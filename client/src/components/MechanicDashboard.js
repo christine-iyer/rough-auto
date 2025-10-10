@@ -8,15 +8,24 @@ function MechanicDashboard({ mechanicId }) {
   const [form, setForm] = useState({ mechanicName: '', email: '', services: [], notes: '', files: [] });
   const [profileMsg, setProfileMsg] = useState('');
   const [questionInput, setQuestionInput] = useState({});
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    setError('');
     fetch(`/api/service-request/mechanic/${mechanicId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch requests');
+        return res.json();
+      })
       .then(data => {
         setPendingRequests(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError('Error loading requests: ' + err.message);
         setLoading(false);
       });
     // Fetch mechanic profile from correct route
@@ -26,6 +35,7 @@ function MechanicDashboard({ mechanicId }) {
       .then(async res => {
         if (!res.ok) {
           setProfile(null);
+          setError('Error loading profile');
           return;
         }
         try {
@@ -40,7 +50,12 @@ function MechanicDashboard({ mechanicId }) {
           });
         } catch {
           setProfile(null);
+          setError('Error parsing profile data');
         }
+      })
+      .catch(err => {
+        setProfile(null);
+        setError('Error loading profile: ' + err.message);
       });
   }, [mechanicId]);
 
@@ -59,6 +74,7 @@ function MechanicDashboard({ mechanicId }) {
   const handleProfileSubmit = async e => {
     e.preventDefault();
     setProfileMsg('');
+    setError('');
     const token = localStorage.getItem('token');
     try {
       const res = await fetch(`/api/edit-mechanic/${mechanicId}`, {
@@ -75,13 +91,25 @@ function MechanicDashboard({ mechanicId }) {
       setEditMode(false);
       setProfileMsg('Profile updated successfully!');
     } catch (err) {
-      setProfileMsg('Error: ' + err.message);
+      setProfileMsg('');
+      setError('Error updating profile: ' + err.message);
     }
   };
 
-  // Only show requests assigned to this mechanic
+  // Debug: log pendingRequests and mechanicId
+  console.log('pendingRequests:', pendingRequests);
+  console.log('mechanicId:', mechanicId);
+
+  // Robust filter for requests assigned to this mechanic
   const myRequests = Array.isArray(pendingRequests)
-    ? pendingRequests.filter(req => req.mechanicId === mechanicId || req.mechanic?._id === mechanicId)
+    ? pendingRequests.filter(req =>
+        req.mechanicId === mechanicId ||
+        req.mechanicId === String(mechanicId) ||
+        req.mechanic?._id === mechanicId ||
+        req.mechanic?._id === String(mechanicId) ||
+        req.mechanic === mechanicId ||
+        req.mechanic === String(mechanicId)
+      )
     : [];
 
   // PATCH request to update status or add question
@@ -92,6 +120,7 @@ function MechanicDashboard({ mechanicId }) {
       body.status = action === 'question' ? 'question' : action;
       if (action === 'question' && questionText) body.question = questionText;
     }
+    setError('');
     try {
       const res = await fetch(`/api/service-request/${reqId}`, {
         method: 'PATCH',
@@ -101,20 +130,28 @@ function MechanicDashboard({ mechanicId }) {
         },
         body: JSON.stringify(body)
       });
-      if (!res.ok) throw new Error('Failed to update request');
-      // Refresh requests after update
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || 'Failed to update request');
+      }
       const updated = await res.json();
       setPendingRequests(prev =>
         prev.map(r => r._id === updated._id ? updated : r)
       );
     } catch (err) {
-      alert('Error: ' + err.message);
+      setError('Error updating request: ' + err.message);
     }
   };
 
   return (
     <div style={{ maxWidth: 600, margin: '0 auto', padding: 24 }}>
       <h2>Mechanic Dashboard</h2>
+      {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
+      {/* Debug output */}
+      <div style={{ fontSize: '0.8em', color: '#888', marginBottom: 12 }}>
+        <strong>Debug:</strong>
+        <pre>{JSON.stringify({ mechanicId, pendingRequests }, null, 2)}</pre>
+      </div>
       <section style={{ marginBottom: 32 }}>
         <h3>Profile</h3>
         {profile && !editMode ? (
