@@ -98,10 +98,11 @@ export default function ServiceRequests({ mechanicId, token }) {
                          description: formData.description,
                          mechanicId: formData.mechanicId,
                          service: formData.service,
-                         vehicleMake: formData.vehicleMake,
-                         vehicleModel: formData.vehicleModel,
-                         vehicleYear: formData.vehicleYear
-
+                         vehicle: {
+                              vehicleMake: formData.vehicleMake,
+                              vehicleModel: formData.vehicleModel,
+                              vehicleYear: formData.vehicleYear
+                         }
                     })
                });
                if (!res.ok) {

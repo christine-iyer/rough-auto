@@ -9,15 +9,17 @@ const router = express.Router();
 // Customer creates a service request
 router.post('/', auth, async (req, res) => {
   try {
-    const { mechanicId, vehicle, description, service } = req.body;
+    const { mechanicId, description, service, vehicle } = req.body;
     const customerId = req.user.id;
     const serviceRequest = new ServiceRequest({
       customerId,
       mechanicId,
       service: service,
-      vehicleMake: vehicleMake,
-      vehicleModel: vehicleModel,
-      vehicleYear: vehicleYear,
+      vehicle: {
+        vehicleMake: vehicle.vehicleMake,
+        vehicleModel: vehicle.vehicleModel,
+        vehicleYear: vehicle.vehicleYear
+      },
       description,
       status: 'pending'
     });
