@@ -7,6 +7,7 @@ function MechanicDashboard({ mechanicId }) {
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState({ mechanicName: '', email: '', services: [], notes: '', files: [] });
   const [profileMsg, setProfileMsg] = useState('');
+  const [questionInput, setQuestionInput] = useState({});
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -78,6 +79,39 @@ function MechanicDashboard({ mechanicId }) {
     }
   };
 
+  // Only show requests assigned to this mechanic
+  const myRequests = Array.isArray(pendingRequests)
+    ? pendingRequests.filter(req => req.mechanicId === mechanicId || req.mechanic?._id === mechanicId)
+    : [];
+
+  // PATCH request to update status or add question
+  const handleRequestAction = async (reqId, action, questionText) => {
+    const token = localStorage.getItem('token');
+    let body = {};
+    if (action === 'accept' || action === 'reject' || action === 'question') {
+      body.status = action === 'question' ? 'question' : action;
+      if (action === 'question' && questionText) body.question = questionText;
+    }
+    try {
+      const res = await fetch(`/api/service-request/${reqId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) throw new Error('Failed to update request');
+      // Refresh requests after update
+      const updated = await res.json();
+      setPendingRequests(prev =>
+        prev.map(r => r._id === updated._id ? updated : r)
+      );
+    } catch (err) {
+      alert('Error: ' + err.message);
+    }
+  };
+
   return (
     <div style={{ maxWidth: 600, margin: '0 auto', padding: 24 }}>
       <h2>Mechanic Dashboard</h2>
@@ -136,19 +170,41 @@ function MechanicDashboard({ mechanicId }) {
       </section>
       <section style={{ marginBottom: 32 }}>
         <h3>Pending Requests</h3>
-        {Array.isArray(pendingRequests) && pendingRequests.length === 0 ? (
+        {myRequests.length === 0 ? (
           <p>No pending requests.</p>
         ) : (
-          Array.isArray(pendingRequests) && (
-            <ul>
-              {pendingRequests.map(req => (
-                <li key={req._id}>
-                  <strong>{req.customer?.customerName || 'Customer'}</strong>: {req.description}
-                  {/* Add buttons to respond/accept/decline as needed */}
-                </li>
-              ))}
-            </ul>
-          )
+          <ul>
+            {myRequests.map(req => (
+              <li key={req._id}>
+                <strong>{req.customer?.customerName || 'Customer'}</strong>: {req.description}
+                <div style={{ marginTop: 8 }}>
+                  <button onClick={() => handleRequestAction(req._id, 'accept')}>Accept</button>
+                  <button onClick={() => handleRequestAction(req._id, 'reject')} style={{ marginLeft: 8 }}>Reject</button>
+                  <input
+                    type="text"
+                    placeholder="Ask a question"
+                    value={questionInput[req._id] || ''}
+                    onChange={e => setQuestionInput(q => ({ ...q, [req._id]: e.target.value }))}
+                    style={{ marginLeft: 8, width: '40%' }}
+                  />
+                  <button
+                    onClick={() => handleRequestAction(req._id, 'question', questionInput[req._id])}
+                    style={{ marginLeft: 4 }}
+                  >
+                    Ask
+                  </button>
+                </div>
+                {req.status === 'question' && req.question && (
+                  <div style={{ color: '#888', marginTop: 4 }}>
+                    <strong>Question:</strong> {req.question}
+                  </div>
+                )}
+                <div style={{ fontSize: '0.9em', color: '#888', marginTop: 4 }}>
+                  Status: {req.status}
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
       </section>
     </div>
