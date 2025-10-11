@@ -100,17 +100,7 @@ function MechanicDashboard({ mechanicId }) {
   console.log('pendingRequests:', pendingRequests);
   console.log('mechanicId:', mechanicId);
 
-  // Robust filter for requests assigned to this mechanic
-  const myRequests = Array.isArray(pendingRequests)
-    ? pendingRequests.filter(req =>
-        req.mechanicId === mechanicId ||
-        req.mechanicId === String(mechanicId) ||
-        req.mechanic?._id === mechanicId ||
-        req.mechanic?._id === String(mechanicId) ||
-        req.mechanic === mechanicId ||
-        req.mechanic === String(mechanicId)
-      )
-    : [];
+  // Remove the filter, use pendingRequests directly
 
   // PATCH request to update status or add question
   const handleRequestAction = async (reqId, action, questionText) => {
@@ -207,11 +197,11 @@ function MechanicDashboard({ mechanicId }) {
       </section>
       <section style={{ marginBottom: 32 }}>
         <h3>Pending Requests</h3>
-        {myRequests.length === 0 ? (
+        {pendingRequests.length === 0 ? (
           <p>No pending requests.</p>
         ) : (
           <ul>
-            {myRequests.map(req => (
+            {pendingRequests.map(req => (
               <li key={req._id}>
                 <strong>{req.customer?.customerName || 'Customer'}</strong>: {req.description}
                 <div style={{ marginTop: 8 }}>
