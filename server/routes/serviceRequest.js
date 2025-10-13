@@ -56,11 +56,11 @@ router.patch('/:id', auth, async (req, res) => {
 // Get all service requests for a mechanic
 router.get('/mechanic/:mechanicId', auth, async (req, res) => {
   try {
-    // Log the mechanic document for debugging
     const mechanic = await Mechanic.findById(req.params.mechanicId);
-    console.log('Mechanic:', mechanic.serviceRequests);
+    if (!mechanic) return res.status(404).json({ error: 'Mechanic not found' });
 
-    const requests = await ServiceRequest.find({ mechanicId: req.params.mechanicId }).populate('customer');
+    // Remove .populate('customer') since ServiceRequest uses customerId
+    const requests = await ServiceRequest.find({ _id: { $in: mechanic.serviceRequests } });
     res.json(requests);
   } catch (err) {
     res.status(500).json({ error: err.message });
