@@ -273,23 +273,25 @@ export default function ServiceRequests({ mechanicId, token }) {
                )}
                {error && <div style={{ color: 'red' }}>{error}</div>}
                <ul>
-                    {requests.map(r => (
-                         <li key={r._id || r.serviceRequestId || r.id}>
-                              {r.description || 'No description'} - Status: {r.status}
-                              <select
-                                   value={editStatus[r._id || r.serviceRequestId || r.id] || r.status}
-                                   onChange={e => handleStatusChange(r._id || r.serviceRequestId || r.id, e.target.value)}
-                                   style={{ marginLeft: '10px' }}
-                              >
-                                   {statusOptions.map(opt => (
-                                        <option key={opt} value={opt}>{opt}</option>
-                                   ))}
-                              </select>
-                              <button onClick={() => handleUpdate(r._id || r.serviceRequestId || r.id)} style={{ marginLeft: '10px', background: '#4CAF50', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>
-                                   Update
-                              </button>
-                         </li>
-                    ))}
+                    {requests
+                         .filter(r => r.status === 'pending') // Only show pending requests
+                         .map(r => (
+                              <li key={r._id || r.serviceRequestId || r.id}>
+                                   {r.description || 'No description'} - Status: {r.status}
+                                   <select
+                                        value={editStatus[r._id || r.serviceRequestId || r.id] || r.status}
+                                        onChange={e => handleStatusChange(r._id || r.serviceRequestId || r.id, e.target.value)}
+                                        style={{ marginLeft: '10px' }}
+                                   >
+                                        {statusOptions.map(opt => (
+                                             <option key={opt} value={opt}>{opt}</option>
+                                        ))}
+                                   </select>
+                                   <button onClick={() => handleUpdate(r._id || r.serviceRequestId || r.id)} style={{ marginLeft: '10px', background: '#4CAF50', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}>
+                                        Update
+                                   </button>
+                              </li>
+                         ))}
                </ul>
           </div>
      );
