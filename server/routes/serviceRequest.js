@@ -11,9 +11,20 @@ router.post('/', auth, async (req, res) => {
   try {
     const { mechanicId, description, service, vehicle, status } = req.body;
     const customerId = req.user.id;
+
+    // Fetch customer and mechanic info
+    const customer = await Customer.findById(customerId);
+    const mechanic = await Mechanic.findById(mechanicId);
+
+    if (!customer) return res.status(404).json({ error: 'Customer not found' });
+    if (!mechanic) return res.status(404).json({ error: 'Mechanic not found' });
+
     const serviceRequest = new ServiceRequest({
       customerId,
       mechanicId,
+      customerName: customer.customerName,
+      customerEmail: customer.email,
+      mechanicName: mechanic.mechanicName,
       service: service,
       vehicle: {
         vehicleMake: vehicle.vehicleMake,
@@ -41,7 +52,7 @@ router.patch('/:id', auth, async (req, res) => {
     const serviceRequest = await ServiceRequest.findById(req.params.id);
     if (!serviceRequest) return res.status(404).json({ error: 'Service request not found' });
     // Only mechanic assigned to request can update
-    if (serviceRequest.mechanic.toString() !== req.user.id) {
+    if (serviceRequest.mechanicId.toString() !== req.user.id) {
       return res.status(403).json({ error: 'Not authorized' });
     }
     if (status) serviceRequest.status = status;
@@ -59,8 +70,10 @@ router.get('/mechanic/:mechanicId', auth, async (req, res) => {
     const mechanic = await Mechanic.findById(req.params.mechanicId);
     if (!mechanic) return res.status(404).json({ error: 'Mechanic not found' });
 
-    // Remove .populate('customer') since ServiceRequest uses customerId
-    const requests = await ServiceRequest.find({ _id: { $in: mechanic.serviceRequests } });
+    // Populate customerId and mechanicId for full details
+    const requests = await ServiceRequest.find({ _id: { $in: mechanic.serviceRequests } })
+      .populate('customerId')
+      .populate('mechanicId');
     res.json(requests);
   } catch (err) {
     res.status(500).json({ error: err.message });
