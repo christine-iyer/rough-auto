@@ -150,6 +150,11 @@ function MechanicDashboard({ mechanicId }) {
             <div><strong>Email:</strong> {profile.email}</div>
             <div><strong>Services:</strong> {profile.services && profile.services.join(', ')}</div>
             <div><strong>Notes:</strong> {profile.notes}</div>
+            {Array.isArray(profile.files) && profile.files.length > 0 && (
+              <div style={{ marginTop: 8, color: '#555' }}>
+                This mechanic has uploaded {profile.files.length} document{profile.files.length > 1 ? 's' : ''}.
+              </div>
+            )}
             <button onClick={() => {
               // Always set form state from latest profile data
               setForm({
