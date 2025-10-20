@@ -4,6 +4,8 @@ time to revisit
 
 ## Features
 
+# To DO. Move front end to newest backend version.
+
 - Mechanic signup and login
 - List of mechanics and their services **for customer shopping**, ie, everyone has access.
 - Mechanic Dashboard
