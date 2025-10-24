@@ -7,7 +7,9 @@ router.get('/', (req, res) => {
     "Brake Repair",
     "Engine Diagnostics",
     "Transmission",
-    "Tire Service"
+    "Tire Service", 
+    "Battery Replacement",
+    "Towing Service"
   ]);
 });
 
