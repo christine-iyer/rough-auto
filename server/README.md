@@ -1,6 +1,7 @@
 # Next Steps
 time to revisit
 and again.
+Ok so Zalicreated a functioning logout. My first step is going to be to get this as part of the router and tabs. Next I'm going to narrate the mechanic flow once they have an account. So the question will come up...and I think i have to decide if there is an override option. 
 
 will need to rewrite routes in new app.
 # List of Mechanics and Mechanic Dashboard FrontEnd
