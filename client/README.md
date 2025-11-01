@@ -1,5 +1,7 @@
 # Getting Started with Create React App
 
+Ok. So let's start breaking down the  uploads.
+
 In order to get the create service request I have to integrate a vehicle creator. So I was in the missle of that abd the computer froze. Will attend to later. 
 addded photo uploads. 
 
