@@ -186,7 +186,7 @@ function MechanicDashboard({ mechanicId }) {
                   <option value="Tire Service">Tire Service</option>
                   <option value="Battery Replacement">Battery Replacement</option>
                   <option value="Towing Service">Towing Service</option>
-                  <option value="Other">Other</option>
+                  <option value="Other Service">Other</option>
                 </select>
                 <div style={{ fontSize: '0.9em', color: '#888', marginTop: 4 }}>
                   Current: {form.services.length ? form.services.join(', ') : 'None'}
