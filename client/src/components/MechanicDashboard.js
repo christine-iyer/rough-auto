@@ -244,4 +244,6 @@ function MechanicDashboard({ mechanicId }) {
     </div>
   );
 }
+
+// accept doent work.
 export default MechanicDashboard;
