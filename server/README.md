@@ -1,5 +1,5 @@
 # Next Steps
-
+added some pricing data to the profile.
 match model variables to front end form fields. 
 matched the fields, but still getting 500 error. will discuss with girls tonight.
 time to revisit
