@@ -1,6 +1,7 @@
 # Next Steps
 added some pricing data to the profile.
 url generator added.
+image upload into database working. is only gathering a single image. if a new one is added, the previous one is replaced. 
 match model variables to front end form fields. 
 matched the fields, but still getting 500 error. will discuss with girls tonight.
 time to revisit
