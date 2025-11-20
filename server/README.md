@@ -1,4 +1,6 @@
 # Next Steps
+translate style
+
 added some pricing data to the profile.
 url generator added.
 image upload into database working. is only gathering a single image. if a new one is added, the previous one is replaced. 
