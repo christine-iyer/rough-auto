@@ -1,5 +1,6 @@
 # Next Steps
 translate style
+ok. I'm starting to translate the styling. 
 
 added some pricing data to the profile.
 url generator added.
