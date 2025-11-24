@@ -1,7 +1,8 @@
 # Next Steps
-translate style
+translate style im progress
 ok. I'm starting to translate the styling. 
 need to incorporate mikes code . 
+upload page edited and profile corrected. 
 
 added some pricing data to the profile.
 url generator added.
