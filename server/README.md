@@ -3,7 +3,7 @@ translate style im progress
 ok. I'm starting to translate the styling. 
 need to incorporate mikes code . 
 upload page edited and profile corrected. 
-
+lets get the start and end times to work. 
 added some pricing data to the profile.
 url generator added.
 image upload into database working. is only gathering a single image. if a new one is added, the previous one is replaced. 
