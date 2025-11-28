@@ -1,4 +1,5 @@
 # Next Steps
+made first and last names editable on the profile page.
 translate style im progress
 ok. I'm starting to translate the styling. 
 need to incorporate mikes code . 
