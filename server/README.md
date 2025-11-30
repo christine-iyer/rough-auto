@@ -1,4 +1,5 @@
 # Next Steps
+added a collapsible section for business information fields in profile.
 Today, I'll see if more fields need to be added and will see if the style matches to the static file.
 made first and last names editable on the profile page.
 translate style im progress
