@@ -1,5 +1,7 @@
 # Next Steps
 Added location settings for mechanic.
+adding profile picture
+I debugged over and over...despite Claude suggestions that the supabase project did not exist, i refused to accept it. Turns out the project will auto pause due to inactivity.
 service location is its own section now.
 added a collapsible section for business information fields in profile.
 Today, I'll see if more fields need to be added and will see if the style matches to the static file.
