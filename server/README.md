@@ -1,5 +1,6 @@
 # Next Steps
 Added location settings for mechanic.
+today I started work on the appointements page. I want to expand the conversation in accepted services requests so that it is easily readible to the mechanic. I think this might need some research. 
 adding profile picture
 I debugged over and over...despite Claude suggestions that the supabase project did not exist, i refused to accept it. Turns out the project will auto pause due to inactivity.
 service location is its own section now.
