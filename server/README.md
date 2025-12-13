@@ -1,5 +1,7 @@
 # Next Steps
 the conversation piece is going strong as far as the mechanic is converned. If the gtoup meets in the next couple days I'll let Zali add to it, otherwise, I'll check myself. 
+
+It appears that the customer side is not working. when i create a service request from the UI. it's not syncing. Will discuss with Zali tomorrow. 
 Added location settings for mechanic.
 today I started work on the appointements page. I want to expand the conversation in accepted services requests so that it is easily readible to the mechanic. I think this might need some research. 
 adding profile picture
