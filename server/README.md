@@ -1,5 +1,6 @@
 # Next Steps
 the conversation piece is going strong as far as the mechanic is converned. If the gtoup meets in the next couple days I'll let Zali add to it, otherwise, I'll check myself. 
+We got the connection going!
 
 It appears that the customer side is not working. when i create a service request from the UI. it's not syncing. Will discuss with Zali tomorrow. 
 Added location settings for mechanic.
