@@ -1,4 +1,5 @@
 # Next Steps
+signif progress on conversation. currently working on the rating. 
 the conversation piece is going strong as far as the mechanic is converned. If the gtoup meets in the next couple days I'll let Zali add to it, otherwise, I'll check myself. 
 We got the connection going!
 
