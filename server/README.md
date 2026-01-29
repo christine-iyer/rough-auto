@@ -1,5 +1,6 @@
 # Next Steps
 it looks like the reply from the customer to the mechanic works from the backend postman. 
+working with Zali. 
 signif progress on conversation. currently working on the rating. 
 checking the route and returning unauth.
 fixed the backend...now i have to get the conversations to show up on the front side. 
