@@ -3,6 +3,7 @@ it looks like the reply from the customer to the mechanic works from the backend
 working with Zali. 
 ran through the admin routes on the back end...they all work. i thing summary stats should be calculated from the front end. 
 **And now the conversations is in mikes**
+will review with mike later. 
 **ok now get the survey to get to customer for completion, send back to admin and mechanic for review...**
 list all customers and mechanics profiles for better review. accept pending users completed. 
 signif progress on conversation. currently working on the rating. 
