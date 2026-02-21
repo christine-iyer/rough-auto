@@ -1,4 +1,18 @@
 # Next Steps
+
+2/20/26
+I am going to get the complete service requesrt function going. `api/service-request/id/complete`
+is the route given but that did not work. I'll need to go back and look at the route again. 
+
+`{
+    "actualCost": 250,
+    "actualDuration": 3,
+    "completionMessage": "Fully passed inspection and stickered as of today."
+}`
+
+but 
+
+
 it looks like the reply from the customer to the mechanic works from the backend postman. 
 working with Zali. 
 ran through the admin routes on the back end...they all work. i thing summary stats should be calculated from the front end. 
