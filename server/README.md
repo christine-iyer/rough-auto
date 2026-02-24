@@ -4,6 +4,13 @@
 I am going to get the complete service requesrt function going. `api/service-request/id/complete`
 is the route given but that did not work. I'll need to go back and look at the route again. 
 
+2/24/26. I spent 35 minutes trying to make all of the conversions necessary to get react-animated to work with expo-go or at least the browser on the phone. I thought it was important to get the app compatible with the phone so that we can showcase the app on the intended device. But I have spent at least an hour troubleshooting...uninstalling, changing versions, and clearing the cache to no avail. I want to ask Zali if it's worth troubleshooting for her client. If it is then there are 2 potential routes.
+
+1. Look for the most recent version that works on expo-go, and then reverese engineer. 
+
+2. Continue troubleshooting iterations. 
+
+
 `{
     "actualCost": 250,
     "actualDuration": 3,
